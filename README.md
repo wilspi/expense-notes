@@ -25,6 +25,8 @@ The generated APK can be found under android/app/build/outputs/apk/app-release.a
 
 $ cd android && ./gradlew assembleRelease
 
+To see console log statements run
+react-native log-android
 
 Add Admob
 npm install react-native-admob@2.0.0-beta.3
