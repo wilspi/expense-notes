@@ -23,7 +23,10 @@ class MetricsScene extends Component {
     render() {
         return (
             <View style={styles.sceneContainer}>
-                <MetricsDisplay style={styles.transactionDisplay} transactions={this.props.screenProps.transactions} ></MetricsDisplay>
+                <MetricsDisplay
+                    style={styles.transactionDisplay}
+                    transactions={this.props.screenProps.transactions}>
+                </MetricsDisplay>
             </View>
         );
     }
@@ -33,11 +36,15 @@ class TransactionsScene extends Component {
     static navigationOptions = {
         title: "Transactions",
     };
-
     render() {
         return (
             <View style={styles.sceneContainer}>
-                <TransactionsDisplay style={styles.transactionDisplay} transactions={this.props.screenProps.transactions} ></TransactionsDisplay>
+                <TransactionsDisplay
+                    style={styles.transactionDisplay}
+                    transactions={this.props.screenProps.transactions}
+                    toggleVisibility={(a) => this.props.screenProps.toggleVisibility(a) }
+                    setFormState={(a) => this.props.screenProps.setFormState(a) } >
+                </TransactionsDisplay>
             </View>
         );
     }

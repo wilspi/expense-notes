@@ -7,23 +7,52 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     Text,
+    TouchableOpacity,
     View
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { iconForCategory } from "../utils/helper";
+import { wrapText, iconForCategory} from "../utils/helper";
 import { colors } from "../utils/constants";
+import CustomButton from "./customButton";
+
 
 export default class TransactionCard extends Component {
     render() {
         return (
             <View style={styles.transactionCard}>
-                <View style={styles.avatar}><Icon name={iconForCategory(this.props.transaction.transactionCategory)} size={24} color={colors["highlightButtonColor"]} /></View>
-                <View style={styles.titleView}><Text style={styles.transactionTitle}>{this.props.transaction.transactionTitle}</Text></View>
-                <View style={styles.amountView}><Icon name="currency-inr" size={22} color={colors["cardTextColor"]} /><Text style={styles.transactionAmount}>{this.props.transaction.transactionAmount}</Text></View>
+                <TouchableOpacity
+                        style={styles.transactionCard}
+                        onPress={()=>{
+                        this.props.toggleVisibility(true);
+                        this.props.setFormState(this.props.transaction);
+                        }}
+                      >
+
+                <View style={styles.avatar}>
+                    <Icon
+                        name={iconForCategory(this.props.transaction.transactionCategory)}
+                        size={24}
+                        color={colors["highlightButtonColor"]} />
+                </View>
+                <View style={styles.midView}>
+                    <View style={styles.titleView}>
+                        <Text style={styles.transactionTitle}>
+                            {wrapText(this.props.transaction.transactionTitle)}
+                        </Text>
+                    </View>
+                    <View style={styles.amountView}>
+                        <Icon name="currency-inr" size={22} color={colors["cardTextColor"]} />
+                            <Text style={styles.transactionAmount}>
+                                {this.props.transaction.transactionAmount}
+                            </Text>
+                        </View>
+                </View>
+            </TouchableOpacity>
             </View>
         )
     }
 }
+
 
 
 const styles = StyleSheet.create({
@@ -31,7 +60,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         //height: 700,
-        //justifyContent: "space-around",
+        //justifyContent: "space-between",
         //alignSelf: "stretch",
         alignItems: "center",
         marginTop: 10,
@@ -66,13 +95,22 @@ const styles = StyleSheet.create({
         //fontWeight: "bold",
         //flexWrap: "wrap"
     },
+    midView: {
+        flexDirection: "row",
+        justifyContent: "center",
+        flex: 2,
+        alignItems: "center",
+    },
     amountView: {
         flexDirection: "row",
         justifyContent: "flex-end",
         marginLeft: "auto",
+        //padding: 100
         //alignSelf: "flex-end",
-        //alignItems: "center",
+        //alignItems: "right",
+        //marginLeft: "auto",
         //flex: 3
+
     },
     transactionAmount: {
         color: colors["cardTextColor"],

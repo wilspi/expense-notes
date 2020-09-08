@@ -20,7 +20,13 @@ export default class TransactionsDisplay extends Component {
         var rows = [];
         var numrows = this.props.transactions.length;
         for (var i = 0; i < numrows; i++) {
-            rows.push(<TransactionCard key={this.props.transactions[i].transactionId} transaction={this.props.transactions[i]} />);
+            rows.push(
+                <TransactionCard
+                    key={this.props.transactions[i].transactionId}
+                    transaction={this.props.transactions[i]}
+                    toggleVisibility={(a) => this.props.toggleVisibility(a)}
+                    setFormState={(a) => this.props.setFormState(a) } />
+            );
         }
         if (rows.length) {
             return (

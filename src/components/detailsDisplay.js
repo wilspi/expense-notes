@@ -50,11 +50,19 @@ export default class DetailsDisplay extends Component {
 
     render() {
         console.log(this.state.balance);
+
         return (
             <View style={styles.detailsDisplay}>
-                <BalanceDisplay style={styles.balanceDisplay} balance={this.state.balance}></BalanceDisplay>
+                <BalanceDisplay
+                    style={styles.balanceDisplay}
+                    balance={this.state.balance}>
+                </BalanceDisplay>
                 <View style={styles.detailedView}>
-                    <DetailTypeNavigation style={styles.nav} transactions={this.state.transactions} />
+                    <DetailTypeNavigation
+                        style={styles.nav}
+                        transactions={this.state.transactions}
+                        toggleVisibility={(a) => this.props.toggleVisibility(a) }
+                        setFormState={(a) => this.props.setFormState(a) } />
                 </View>
             </View>
         )

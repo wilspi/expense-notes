@@ -17,9 +17,15 @@ export default class BalanceDisplay extends Component {
         return (
             <View style={styles.balances}>
                 <View style={styles.dayBalance}>
-                    <View styles={styles.headingTextView}><Text style={styles.headingText}>EXPENSES</Text></View>
+                    <View styles={styles.headingTextView}>
+                        <Text style={styles.headingText}>EXPENSES</Text>
+                    </View>
                     <View style={styles.amountView}>
-                        <Icon style={styles.currency} name="currency-inr" size={48} color={colors["highlightTextColor"]} />
+                        <Icon
+                            style={styles.currency}
+                            name="currency-inr"
+                            size={48}
+                            color={colors["highlightTextColor"]} />
                         <Text style={styles.amountTextView}>{this.props.balance}</Text>
                     </View>
                 </View>

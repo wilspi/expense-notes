@@ -17,9 +17,23 @@ export default class CategoryItem extends Component {
     render() {
         return (
             <View style={styles.transactionCard}>
-                <View style={styles.avatar}><Icon name={iconForCategory(this.props.category.index)} size={24} color={colors["highlightButtonColor"]} /></View>
-                <View style={styles.titleView}><Text style={styles.categoryTitle}>{this.props.category.name.toUpperCase()}</Text></View>
-                <View style={styles.amountView}><Icon name="currency-inr" size={22} color={colors["cardTextColor"]} /><Text style={styles.transactionAmount}>{minifyAmount(this.props.category.amount)}</Text></View>
+                <View style={styles.avatar}>
+                    <Icon
+                        name={iconForCategory(this.props.category.index)}
+                        size={24}
+                        color={colors["highlightButtonColor"]} />
+                </View>
+                <View style={styles.titleView}>
+                    <Text style={styles.categoryTitle}>
+                        {this.props.category.name.toUpperCase()}
+                    </Text>
+                </View>
+                <View style={styles.amountView}>
+                    <Icon name="currency-inr" size={22} color={colors["cardTextColor"]} />
+                    <Text style={styles.transactionAmount}>
+                        {minifyAmount(this.props.category.amount)}
+                    </Text>
+                </View>
             </View>
         )
     }

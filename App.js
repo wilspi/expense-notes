@@ -26,10 +26,13 @@ export default class App extends Component {
         super(props)
         this.state = {
             date: new Date(),
-            addFormVisibility: false
+            addFormVisibility: false,
+            formState: {transactionValues: {}}
         }
         this.handleDateChange = this.handleDateChange.bind(this);
         this.toggleAddFormVisibility = this.toggleAddFormVisibility.bind(this);
+        this.setFormState = this.setFormState.bind(this);
+        this.getTransactionValues = this.getTransactionValues.bind(this);
     }
 
     handleDateChange(newDate) {
@@ -42,16 +45,33 @@ export default class App extends Component {
         });
     }
 
+    setFormState(tval) {
+        this.setState({
+            formState: {transactionValues: tval}
+        })
+    }
+
+    getTransactionValues() {
+        return this.state.formState.transactionValues;
+    }
+
     render() {
         return (
             <View style={styles.container}>
 
                 <View style={styles.headingSection}>
-                    <DateDisplay date={this.state.date} onDateChange={this.handleDateChange} ></DateDisplay>
+                    <DateDisplay
+                        date={this.state.date}
+                        onDateChange={this.handleDateChange} >
+                    </DateDisplay>
                 </View>
 
                 <View style={styles.contentSection}>
-                    <DetailsDisplay date={this.state.date}></DetailsDisplay>
+                    <DetailsDisplay
+                        date={this.state.date}
+                        setFormState={this.setFormState}
+                        toggleVisibility={this.toggleAddFormVisibility} >
+                    </DetailsDisplay>
                 </View>
 
                 <View style={styles.addButtonView}>
@@ -65,7 +85,11 @@ export default class App extends Component {
                 <AddTransactionForm
                     visibility={this.state.addFormVisibility}
                     onDateChange={this.handleDateChange}
-                    toggleVisibility={this.toggleAddFormVisibility}></AddTransactionForm>
+                    toggleVisibility={this.toggleAddFormVisibility}
+                    setFormState={this.setFormState}
+                    formTransactionValues = {this.state.formState.transactionValues}
+                    getTransactionValues = {this.getTransactionValues}>
+                </AddTransactionForm>
 
             </View>
         );

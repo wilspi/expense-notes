@@ -13,12 +13,10 @@ import {
     View
 } from 'react-native';
 import t from 'tcomb-form-native';
-// import { AdMobBanner } from 'react-native-admob';
 
 import CustomButton from "./customButton";
-import { categories, monthNames, addTransaction } from "../utils/helper";
+import { categories, monthNames, addTransaction, deleteTransaction, editTransaction, isEmpty} from "../utils/helper";
 import { colors } from "../utils/constants";
-
 
 var Form = t.form.Form;
 const ExpenseCategories = t.enums(categories);
@@ -77,25 +75,20 @@ export default class AddTransactionForm extends Component {
         //AsyncStorage.clear();
 
         this.state = {
-            transactionValues: {
-                transactionTitle: "",
-                transactionNotes: "",
-                transactionAmount: "",
-                transactionAt: new Date(),
-                transactionCategory: "",
-            }
+            transactionValues: {}
+        }
+    }
+    componentDidUpdate(){
+
+        if (!isEmpty(this.props.formTransactionValues)) {
+            let transaction = this.props.getTransactionValues();
+            this.setState({transactionValues: transaction});
+            this.props.setFormState({});
         }
     }
 
     clearForm() {
-        this.setState({
-            transactionValues: {
-                transactionTitle: "",
-                transactionNotes: "",
-                transactionAmount: "",
-                transactionAt: new Date(),
-                transactionCategory: "",
-        }});
+        this.setState({transactionValues: {}});
     }
 
     render() {
@@ -118,49 +111,75 @@ export default class AddTransactionForm extends Component {
                             type={Transaction}
                             value={this.state.transactionValues}
                             options={options}
-                            onChange={(value) => {
-                                // this is heavy lifting against rendering in my opinion
-                                this.setState({transactionValues: value});
-                            }}
                             style={styles.form}/>
                     </View>
-
-                    <View style={styles.buttonsRow}>
-                        <CustomButton
+                    <View style={styles.buttonsRow}  >
+                         { !isEmpty(this.state.transactionValues) ?
+                            <CustomButton
                             onPress={() => {
-                                // do check Validations
+                                this.props.toggleVisibility(!this.props.visibility);
                                 var value = this.refs.form.getValue();
-                                if (value) {
-                                    addTransaction(value);
-                                    this.clearForm();
-                                    this.props.onDateChange(new Date(value.transactionAt));
-                                    this.props.toggleVisibility(!this.props.visibility);
+                                let transaction = this.state.transactionValues;
+                                if (JSON.stringify(transaction.transactionAt) !== JSON.stringify(value.transactionAt)){
+                                    deleteTransaction(
+                                        transaction.transactionAt,
+                                        transaction.transactionId
+                                    ).then(() => { addTransaction(value, value.transactionAt);});
                                 }
+                                else{
+                                    editTransaction(
+                                        transaction['transactionAt'],
+                                        transaction['transactionId'],
+                                        value);
+                                }
+                                this.clearForm();
                             }}
-                            text="ADD"
-                            style={styles.addButton} />
+                            text="Save"
+                            style={styles.cancelButton} />
+                         :null}
+
+                        {isEmpty(this.state.transactionValues)?
+                            <CustomButton
+                                onPress={() => {
+                                    // do check Validations
+                                    var value = this.refs.form.getValue();
+                                    if (value) {
+                                        addTransaction(value, null);
+                                        this.clearForm();
+                                        this.props.onDateChange(new Date(value.transactionAt));
+                                        this.props.toggleVisibility(!this.props.visibility);
+                                    }
+                                }}
+                                text="Add"
+                                style={styles.addButton} />
+                        :null}
+                        { !isEmpty(this.state.transactionValues)?
+                            <CustomButton
+                                onPress={() => {
+                                    let transaction = this.state.transactionValues;
+                                    deleteTransaction(
+                                        transaction['transactionAt'],
+                                        transaction['transactionId']);
+                                    this.props.toggleVisibility(!this.props.visibility);
+                                    this.clearForm();
+
+                                }}
+                                text="Delete"
+                                style={styles.cancelButton} />
+                        :null}
                         <CustomButton
                             onPress={() => {
                                 this.props.toggleVisibility(!this.props.visibility);
+                                this.clearForm();
                             }}
-                            text="CLOSE"
+                            text="Close"
                             style={styles.cancelButton} />
                     </View>
                 </ScrollView>
-
              </Modal>
         )
     }
 }
-
-// <AdMobBanner
-//     adSize="smartBannerPortrait"
-//     adUnitID="ca-app-pub-7580790826155961/6942102162"
-//     // testDevices={[AdMobBanner.simulatorId]}
-//     // onAdLoaded={() => console.log("Ad loaded")}
-//     // onAdFailedToLoad={error => console.error(error)}
-//     />
-
 
 const styles = StyleSheet.create({
     formContainer: {

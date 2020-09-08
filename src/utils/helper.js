@@ -75,6 +75,12 @@ export function iconForCategory(category) {
 
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
+export function wrapText(text) {
+    if (text.length > 25) {
+        return (text.substring(0, 20) + "...");
+    }
+    return text;
+}
 
 function getDateEpoch(date) {
     //check if not date object
@@ -167,14 +173,16 @@ export async function fetchTransactions(date) {
     return transactions;
 }
 
-export async function addTransaction(data) {
+export async function addTransaction(data, transactionDate) {
+    if (transactionDate === null)
+        transactionDate = new Date();
     if (data) {
         /* data is frozen here, so stringify and parse to clone it. Read, https://stackoverflow.com/a/22058484 */
         var transaction = extend(JSON.parse(JSON.stringify(data), dateTimeReviver), {
             transactionId: uuid(),
             transactionTags: [],
-            createdAt: new Date(),
-            modifiedAt: new Date(),
+            createdAt: transactionDate,
+            modifiedAt: transactionDate,
             deletedAt: null,
             schemaVersion: "0.1",
         });
@@ -190,6 +198,7 @@ export async function addTransaction(data) {
             /* unshift - to add latest entry on top. Else sorting will have to be done before rendering. */
             transactions.unshift(transaction);
             await AsyncStorage.setItem('@MySuperStore:'+key, JSON.stringify(transactions));
+
         } catch (error) {
             console.log("Error setting data" + error);
         }
@@ -205,4 +214,53 @@ export function fetchBalance(transactions) {
         }
     }
     return sum;
+}
+export async function deleteTransaction(date, Id) {
+     try {
+         const key = getDateEpoch(date);
+         const existingTransactions = JSON.parse(await AsyncStorage.getItem('@MySuperStore:'+key));
+         let transactions = []
+         for (var i = 0; i < existingTransactions.length; i++) {
+             if( Id != existingTransactions[i].transactionId){
+                 transactions.push(existingTransactions[i]);
+             }
+         }
+         await AsyncStorage.setItem('@MySuperStore:'+key, JSON.stringify(transactions));
+
+         return true;
+     }
+     catch(exception) {
+         return false;
+     }
+ }
+
+export function isEmpty(obj) {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+
+export async function editTransaction(date, Id, value) {
+    try {
+        const key = getDateEpoch(date);
+        const existingTransactions = JSON.parse(await AsyncStorage.getItem('@MySuperStore:'+key));
+        for (var i = 0; i < existingTransactions.length; i++) {
+            if( Id == existingTransactions[i].transactionId){
+                existingTransactions[i].transactionAmount = value.transactionAmount;
+                existingTransactions[i].createdAt = value.transactionAt;
+                existingTransactions[i].modifiedAt = value.transactionAt;
+                existingTransactions[i].transactionCategory = value.transactionCategory;
+                existingTransactions[i].transactionTitle = value.transactionTitle;
+                existingTransactions[i].transactionNotes = value.transactionNotes;
+            }
+        }
+        await AsyncStorage.setItem('@MySuperStore:'+key, JSON.stringify(existingTransactions));
+
+        return true;
+    }
+    catch(exception) {
+        return false;
+    }
 }

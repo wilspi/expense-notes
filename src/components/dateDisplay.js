@@ -65,7 +65,10 @@ export default class DateDisplay extends Component {
         let pickerText = dateTextFormatter(this.props.date);
         return (
             <View style={styles.dateDisplay}>
-                <CustomButton style={styles.buttonStyle} onPress={this.selectDate} text={pickerText}/>
+                <CustomButton
+                    style={styles.buttonStyle}
+                    onPress={this.selectDate}
+                    text={pickerText}/>
             </View>
         )
     }
